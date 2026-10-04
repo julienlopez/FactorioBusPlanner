@@ -7,9 +7,10 @@ Built for heavily modded games (primarily Nullius); visualisation only, no throu
 
 Cargo workspace (edition 2024):
 
-- `common/` (`fbp-common`): data model shared by all crates (`Catalog`, `Item`, `Group`, `Subgroup`) and its load/save.
+- `common/` (`fbp-common`): data model shared by all crates: the extracted `Catalog` (`Item`, `Group`, `Subgroup`)
+  and the `Bus` layout (`Slot`: empty / two-sided belt / pipe, each with a `Direction`), with their load/save.
 - `cli/` (`fbp-extract`): extracts the item catalog and icons from the user's Factorio install into a local folder.
-- `ui/` (planned): Dioxus desktop app that reads the extracted folder.
+- `ui/` (`fbp-ui`): Dioxus 0.7 desktop app to edit bus layouts (see `ui/AGENTS.md` for the Dioxus 0.7 API).
 
 ## Commands
 
@@ -18,7 +19,22 @@ cargo build
 cargo test
 cargo run -p fbp-extract -- --out data          # run Factorio dumps and build data/
 cargo run -p fbp-extract -- --script-output <dir>  # reuse existing dumps, don't launch Factorio
+cd ui && dx serve                               # run the UI with hot reload
 ```
+
+Run the UI through `dx` (`dx serve` / `dx build`): a plain `cargo run -p fbp-ui` doesn't bundle `asset!()` files, so
+the CSS is missing.
+
+## UI notes
+
+- Desktop only. The data folder is the first CLI argument, or `data/` found by walking up from the cwd / exe dir,
+  or picked with a folder dialog. It's loaded once in `main` and provided as an `Arc<Data>` context.
+- Icons are served to the webview by a custom asset handler at `/fbp-data/<catalog icon path>`.
+- Editor state is `EditorState` (a bundle of signals) in a context; unsaved changes = `bus != saved`.
+- Bus files are plain JSON (`Bus`), opened/saved with native `rfd` dialogs.
+- Belt `left`/`right` are screen sides as drawn, not relative to belt direction.
+- To drive the running app for testing, launch it with
+  `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222` and use the Chrome DevTools Protocol.
 
 ## Extracted data format
 

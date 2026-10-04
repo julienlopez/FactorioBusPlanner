@@ -1,8 +1,12 @@
 //! Data model shared between the extractor CLI and the UI.
 
+mod bus;
+
 use std::{fs, io, path::Path};
 
 use serde::{Deserialize, Serialize};
+
+pub use bus::{Bus, Direction, GROUP_BELTS, GROUP_GAP, Slot};
 
 /// File name of the catalog inside an extracted data folder.
 pub const CATALOG_FILE: &str = "catalog.json";

@@ -1,0 +1,16 @@
+[package]
+name = "fbp-ui"
+version.workspace = true
+authors = ["julien lopez <julien.lopez51@gmail.com>"]
+edition.workspace = true
+
+[dependencies]
+fbp-common.workspace = true
+dioxus = { version = "0.7.1", features = [] }
+rfd = "0.15"
+serde_json.workspace = true
+
+# Desktop only: icons are served from the local data folder and files are opened with native dialogs.
+[features]
+default = ["desktop"]
+desktop = ["dioxus/desktop"]
